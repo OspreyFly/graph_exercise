@@ -54,40 +54,51 @@ class Graph {
     this.nodes.delete(vertex);
   }
   
-
   // this function returns an array of Node values using DFS
   depthFirstSearch(start) {
-    const visited = [];
-    const stack = [start];
-  
-    while (stack.length > 0) {
-      const current = stack.pop();
-      if (!visited.includes(current)) {
-        visited.push(current);
-        stack.push(...current.adjacent);
+    const visited = new Set();
+    const result = [];
+
+    function traverse(vertex) {
+      // base case
+      if (!vertex) {
+        return null;
       }
+      // visit node
+      visited.add(vertex);
+      result.push(vertex.value);
+
+      // visit neighbors
+      vertex.adjacent.forEach(neighbor => {
+        if (!visited.has(neighbor)) {
+          return traverse(neighbor);
+        }
+      });
     }
-  
-    return visited;
+
+    traverse(start);
+
+    return result;
   }
   
-
+  
   // this function returns an array of Node values using BFS
   breadthFirstSearch(start) {
     const visited = [];
-    const queue = [start];
-  
+    const queue = [start]; // Start with the start node itself
+    
     while (queue.length > 0) {
-      const current = queue.shift();
-      if (!visited.includes(current)) {
-        visited.push(current);
+      const current = queue.shift(); // Remove the first node from the queue
+      const currentValue = current.value; // Convert Node object to its value
+      if (!visited.includes(currentValue)) {
+        visited.push(currentValue);
+        // Push the entire Node object to the queue so we can access .adjacent later
         queue.push(...current.adjacent);
       }
     }
-  
+    
     return visited;
   }
-  
 }
 
 module.exports = {Graph, Node}
